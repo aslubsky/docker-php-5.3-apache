@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y apache2-bin apache2-dev apache2.2-commo
 RUN rm -rf /var/www/html && mkdir -p /var/lock/apache2 /var/run/apache2 /var/log/apache2 /var/www/html && chown -R www-data:www-data /var/lock/apache2 /var/run/apache2 /var/log/apache2 /var/www/html
 
 # Apache + PHP requires preforking Apache for best results
-RUN a2dismod mpm_event && a2enmod mpm_prefork
+RUN a2dismod mpm_event && a2enmod mpm_prefork && a2enmod rewrite && a2enmod headers
 
 RUN mv /etc/apache2/apache2.conf /etc/apache2/apache2.conf.dist
 COPY apache2.conf /etc/apache2/apache2.conf
@@ -70,6 +70,12 @@ RUN set -x \
 	&& apt-get purge -y --auto-remove autoconf2.13 \
   && make clean
 
+RUN docker-php-ext-install curl
+RUN docker-php-ext-install mbstring
+RUN docker-php-ext-install gd
+RUN docker-php-ext-install zip
+RUN docker-php-ext-install SimpleXML
+
 COPY docker-php-* /usr/local/bin/
 COPY apache2-foreground /usr/local/bin/
 
@@ -77,4 +83,3 @@ WORKDIR /var/www/html
 
 EXPOSE 80
 CMD ["apache2-foreground"]
-
