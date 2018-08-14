@@ -63,6 +63,8 @@ RUN set -x \
 		--with-mysql \
 		--with-mysqli \
 		--with-pdo-mysql \
+		--with-zip \
+		--with-mbstring \
 		--with-openssl=/usr/local/ssl \
 	&& make -j"$(nproc)" \
 	&& make install \
@@ -70,14 +72,13 @@ RUN set -x \
 	&& apt-get purge -y --auto-remove autoconf2.13 \
   && make clean
 
-RUN docker-php-ext-install curl
-RUN docker-php-ext-install mbstring
-RUN docker-php-ext-install gd
-RUN docker-php-ext-install zip
-RUN docker-php-ext-install SimpleXML
 
 COPY docker-php-* /usr/local/bin/
 COPY apache2-foreground /usr/local/bin/
+
+RUN pear upgrade-all
+RUN pear install System_Daemon
+RUN mkdir /var/log/reports-daemon
 
 WORKDIR /var/www/html
 
