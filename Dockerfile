@@ -110,6 +110,7 @@ RUN set -x \
 		--with-gettext \
         --with-xml \
         --with-xmlrpc \
+        --with-curl \
         --enable-soap \
         --enable-cli \
         --enable-libxml \
@@ -124,6 +125,9 @@ RUN set -x \
         --enable-curl \
         --enable-sockets \
         --enable-memcached \
+        --enable-bcmath \
+        --enable-bz2 \
+        --enable-calendar \
 	&& make -j"$(nproc)" \
 	&& make install \
 	&& dpkg -r bison libbison-dev \
